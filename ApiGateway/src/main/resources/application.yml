@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    discovery:
+      enabled: true
+    compatibility-verifier:
+      enabled: false
+    gateway:
+      routes:
+        - id: passenger-service
+          uri: lb://passenger-service  # Uses Eureka for load balancing
+          predicates:
+            - Path=/passengers/**  # Matches the /passengers path
+
+        - id: booking-service
+          uri: lb://booking-service  # Uses Eureka for load balancing
+          predicates:
+            - Path=/bookings/**  # Matches the /bookings path
+
+  eureka:
+    client:
+      service-url:
+        defaultZone: http://localhost:8761/eureka  # Eureka Server URL
+
+instance:
+  prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+
